@@ -1,6 +1,6 @@
 .global main
 main:
-    mov $0, %ebx
+    xor %ebx, %ebx
     mov $101, %ecx
    // ans in [ebx, ecx) 
 loop:
@@ -13,22 +13,17 @@ loop:
     mov %edx, %eax
     call writei32
     call readi32
-    cmp $0, %eax
-    // %eax - 0
+    test %eax, %eax
     jg update_left
     jl update_right
     mov %edx, %ebx
-    jmp end
+end:
+    mov %ebx, %eax
+    call writei32
+    call finish
 update_left:
     mov %edx, %ebx
     jmp loop
 update_right:
     mov %edx, %ecx
     jmp loop
-end:
-    mov %ebx, %eax
-    call writei32
-    call finish
-
-    // ...
-    
