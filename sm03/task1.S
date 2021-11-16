@@ -26,6 +26,32 @@ exit:
 	pop %ebx
 	pop %ebp
 	ret
+
+// input: %eax -- byte
+// prints %al in hex
+printByteHex:
+	push %ebx
+	sub $3, %esp
+	mov %eax, %edx
+	shr $4, %edx
+	movzb digits(%edx), %ecx
+	mov %cl, (%esp)
+	and $0xf, %eax
+	movzb digits(%eax), %ecx
+	mov %cl, 1(%esp)
+	movb $'\n', 2(%esp)
+
+	mov $SYS_write, %eax
+	mov $1, %ebx
+	mov %esp, %ecx
+	mov $3, %edx
+	int $0x80
+
+	add $3, %esp
+	pop %ebx
+	ret
+digits: .ascii "0123456789abcdef"
+
 /// input:
 /// al - number
 /// output:
@@ -55,6 +81,11 @@ loop:
         test %eax, %eax
         push %eax
         jl eof
+
+	push %eax
+	call printByteHex
+	pop %eax
+
 	// b0, b0 < 128   0b0.......
         // b1, b2, .. bk  b1: 0b1110... b2..k: 0b10.....
         test %esi, %esi
